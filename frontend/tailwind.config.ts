@@ -9,15 +9,20 @@ const config: Config = {
   theme: {
     extend: {
       colors: {
-        ink: "#0f172a",
-        mist: "#e2e8f0",
-        steel: "#334155",
-        cloud: "#f8fafc",
-        accent: "#0f766e",
-        sand: "#f6f1e8"
+        ink: "#050505",
+        mist: "#e7e9ee",
+        steel: "#3f3f46",
+        muted: "#71717a",
+        cloud: "#f7f8fa",
+        page: "#fbfbfc",
+        border: "#dfe3ea",
+        accent: "#60a5fa",
+        savings: "#0f172a",
+        risk: "#b45309",
+        danger: "#dc2626"
       },
       boxShadow: {
-        panel: "0 18px 50px rgba(15, 23, 42, 0.08)"
+        panel: "0 1px 0 rgba(5, 5, 5, 0.06), 0 12px 30px rgba(5, 5, 5, 0.035)"
       }
     },
   },

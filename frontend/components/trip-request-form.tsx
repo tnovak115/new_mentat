@@ -109,10 +109,13 @@ export function TripRequestForm({
   }
 
   return (
-    <form className="rounded-3xl border border-black/10 bg-white p-6 shadow-panel" onSubmit={handleSubmit}>
+    <form className="section-card p-5" onSubmit={handleSubmit}>
       <div className="mb-6">
-        <p className="text-xs uppercase tracking-[0.2em] text-steel">Trip request intake</p>
-        <h3 className="mt-2 text-2xl font-semibold">Capture traveler needs</h3>
+        <p className="eyebrow">Trip request intake</p>
+        <h3 className="mt-2 text-xl font-semibold tracking-tight">Capture traveler needs</h3>
+        <p className="mt-2 text-sm leading-6 text-steel">
+          Submit the minimum operational details and let the optimizer return the best decision.
+        </p>
       </div>
 
       <div className="grid gap-4 md:grid-cols-2">
@@ -257,7 +260,7 @@ export function TripRequestForm({
         <button
           type="submit"
           disabled={pending || Boolean(validationError)}
-          className="rounded-full bg-accent px-5 py-3 text-sm font-medium text-white transition hover:opacity-90 disabled:opacity-60"
+          className="btn-primary"
         >
           {pending ? "Optimizing..." : "Submit trip request"}
         </button>

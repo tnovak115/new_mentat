@@ -1,0 +1,28 @@
+{
+  "expo": {
+    "name": "Travel Optimizer",
+    "slug": "travel-optimizer",
+    "version": "0.1.0",
+    "orientation": "portrait",
+    "scheme": "traveloptimizer",
+    "userInterfaceStyle": "light",
+    "splash": {
+      "backgroundColor": "#F7F4EF"
+    },
+    "assetBundlePatterns": [
+      "**/*"
+    ],
+    "ios": {
+      "supportsTablet": true
+    },
+    "android": {
+      "adaptiveIcon": {
+        "backgroundColor": "#F7F4EF"
+      },
+      "usesCleartextTraffic": true
+    },
+    "extra": {
+      "apiBaseUrl": "http://10.0.2.2:8000"
+    }
+  }
+}

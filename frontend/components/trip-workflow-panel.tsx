@@ -59,9 +59,9 @@ export function TripWorkflowPanel({ initialTrip }: { initialTrip: Trip }) {
   }
 
   return (
-    <div className="rounded-3xl border border-black/10 bg-white p-6 shadow-panel">
-      <p className="text-xs uppercase tracking-[0.2em] text-steel">Workflow actions</p>
-      <h3 className="mt-2 text-2xl font-semibold">Booking path control</h3>
+    <div className="section-card p-5">
+      <p className="eyebrow">Workflow actions</p>
+      <h3 className="mt-2 text-xl font-semibold tracking-tight">Booking path control</h3>
       <p className="mt-3 text-sm text-steel">
         Use this panel to move the trip through approval, direct booking, or assisted fulfillment.
       </p>
@@ -72,7 +72,7 @@ export function TripWorkflowPanel({ initialTrip }: { initialTrip: Trip }) {
       </div>
 
       {trip.status === "pending_approval" ? (
-        <div className="mt-5 rounded-2xl border border-amber-200 bg-amber-50 p-4">
+        <div className="mt-5 rounded-lg border border-amber-200 bg-amber-50 p-4">
           <p className="text-sm text-amber-900">
             This itinerary needs an exception decision before booking can continue.
           </p>
@@ -81,7 +81,7 @@ export function TripWorkflowPanel({ initialTrip }: { initialTrip: Trip }) {
               type="button"
               onClick={() => runAction(() => approveTrip(trip.id), "Approval granted. The booking is ready to move forward.")}
               disabled={pending}
-              className="rounded-full bg-amber-700 px-5 py-3 text-sm font-medium text-white disabled:opacity-60"
+              className="btn-primary bg-amber-700 hover:bg-amber-800"
             >
               {pending ? "Processing..." : "Approve exception"}
             </button>
@@ -89,7 +89,7 @@ export function TripWorkflowPanel({ initialTrip }: { initialTrip: Trip }) {
               type="button"
               onClick={() => runAction(() => rejectTrip(trip.id), "Approval rejected. The trip is back in option-selection mode.")}
               disabled={pending}
-              className="rounded-full border border-amber-300 px-5 py-3 text-sm font-medium text-amber-900 disabled:opacity-60"
+              className="btn-secondary border-amber-300 text-amber-900"
             >
               Reject trip
             </button>
@@ -98,7 +98,7 @@ export function TripWorkflowPanel({ initialTrip }: { initialTrip: Trip }) {
       ) : null}
 
       {trip.status === "approved" && trip.booking?.status === "ready_to_book" ? (
-        <div className="mt-5 space-y-4 rounded-2xl border border-sky-200 bg-sky-50 p-4">
+        <div className="mt-5 space-y-4 rounded-lg border border-sky-200 bg-sky-50 p-4">
           <p className="text-sm text-sky-900">
             This trip is approved and ready. You can confirm it directly or route it to assisted fulfillment.
           </p>
@@ -112,14 +112,14 @@ export function TripWorkflowPanel({ initialTrip }: { initialTrip: Trip }) {
                 )
               }
               disabled={pending}
-              className="rounded-full bg-sky-700 px-5 py-3 text-sm font-medium text-white disabled:opacity-60"
+              className="btn-primary bg-sky-700 hover:bg-sky-800"
             >
               {pending ? "Processing..." : "Confirm direct booking"}
             </button>
           </div>
 
-          <div className="rounded-2xl border border-black/10 bg-white/80 p-4">
-            <label className="text-xs uppercase tracking-[0.2em] text-steel" htmlFor="assisted-notes">
+          <div className="rounded-lg border border-border bg-white/80 p-4">
+            <label className="text-xs font-semibold uppercase tracking-[0.12em] text-muted" htmlFor="assisted-notes">
               Assisted fulfillment notes
             </label>
             <textarea
@@ -127,7 +127,7 @@ export function TripWorkflowPanel({ initialTrip }: { initialTrip: Trip }) {
               value={assistedRequestNotes}
               onChange={(event) => setAssistedRequestNotes(event.target.value)}
               rows={3}
-              className="mt-3 w-full rounded-2xl border border-black/10 bg-white px-4 py-3 text-sm outline-none ring-0"
+              className="field mt-3"
               placeholder="Optional context for the travel desk or operator."
             />
             <button
@@ -142,7 +142,7 @@ export function TripWorkflowPanel({ initialTrip }: { initialTrip: Trip }) {
                 )
               }
               disabled={pending}
-              className="mt-4 rounded-full border border-sky-300 px-5 py-3 text-sm font-medium text-sky-900 disabled:opacity-60"
+              className="btn-secondary mt-4 border-sky-300 text-sky-900"
             >
               Route to travel desk
             </button>
@@ -151,53 +151,53 @@ export function TripWorkflowPanel({ initialTrip }: { initialTrip: Trip }) {
       ) : null}
 
       {trip.booking?.status === "fulfillment_requested" ? (
-        <form onSubmit={handleCompleteAssistedFulfillment} className="mt-5 space-y-4 rounded-2xl border border-emerald-200 bg-emerald-50 p-4">
+        <form onSubmit={handleCompleteAssistedFulfillment} className="mt-5 space-y-4 rounded-lg border border-emerald-200 bg-emerald-50 p-4">
           <p className="text-sm text-emerald-900">
             Assisted fulfillment is in progress. Complete the handoff once ops has secured the itinerary.
           </p>
           <div className="grid gap-3 md:grid-cols-2">
             <label className="text-sm text-ink">
-              <span className="text-xs uppercase tracking-[0.2em] text-steel">Fulfilled by</span>
+              <span className="text-xs font-semibold uppercase tracking-[0.12em] text-muted">Fulfilled by</span>
               <input
                 value={fulfilledBy}
                 onChange={(event) => setFulfilledBy(event.target.value)}
-                className="mt-2 w-full rounded-2xl border border-black/10 bg-white px-4 py-3 outline-none"
+                className="field mt-2"
                 placeholder="Taylor Ops"
               />
             </label>
             <label className="text-sm text-ink">
-              <span className="text-xs uppercase tracking-[0.2em] text-steel">Provider locator</span>
+              <span className="text-xs font-semibold uppercase tracking-[0.12em] text-muted">Provider locator</span>
               <input
                 value={providerLocator}
                 onChange={(event) => setProviderLocator(event.target.value)}
-                className="mt-2 w-full rounded-2xl border border-black/10 bg-white px-4 py-3 outline-none"
+                className="field mt-2"
                 placeholder="OPS123"
               />
             </label>
             <label className="text-sm text-ink">
-              <span className="text-xs uppercase tracking-[0.2em] text-steel">Confirmation code</span>
+              <span className="text-xs font-semibold uppercase tracking-[0.12em] text-muted">Confirmation code</span>
               <input
                 value={confirmationCode}
                 onChange={(event) => setConfirmationCode(event.target.value)}
-                className="mt-2 w-full rounded-2xl border border-black/10 bg-white px-4 py-3 outline-none"
+                className="field mt-2"
                 placeholder="Optional custom confirmation"
               />
             </label>
           </div>
           <label className="block text-sm text-ink">
-            <span className="text-xs uppercase tracking-[0.2em] text-steel">Completion notes</span>
+            <span className="text-xs font-semibold uppercase tracking-[0.12em] text-muted">Completion notes</span>
             <textarea
               value={completionNotes}
               onChange={(event) => setCompletionNotes(event.target.value)}
               rows={3}
-              className="mt-2 w-full rounded-2xl border border-black/10 bg-white px-4 py-3 outline-none"
+              className="field mt-2"
               placeholder="Booked with negotiated fare, seat confirmed, or other operator context."
             />
           </label>
           <button
             type="submit"
             disabled={pending}
-            className="rounded-full bg-emerald-700 px-5 py-3 text-sm font-medium text-white disabled:opacity-60"
+            className="btn-primary bg-emerald-700 hover:bg-emerald-800"
           >
             {pending ? "Completing..." : "Complete assisted fulfillment"}
           </button>
@@ -205,7 +205,7 @@ export function TripWorkflowPanel({ initialTrip }: { initialTrip: Trip }) {
       ) : null}
 
       {trip.status === "booked" ? (
-        <div className="mt-5 rounded-2xl border border-emerald-200 bg-emerald-50 p-4 text-sm text-emerald-900">
+        <div className="mt-5 rounded-lg border border-emerald-200 bg-emerald-50 p-4 text-sm text-emerald-900">
           This trip is booked. The current record reflects the completed fulfillment path.
         </div>
       ) : null}

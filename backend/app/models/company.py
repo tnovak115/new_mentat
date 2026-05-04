@@ -11,6 +11,12 @@ class Company(Base):
 
     id: Mapped[int] = mapped_column(Integer, primary_key=True, index=True)
     name: Mapped[str] = mapped_column(String(255), unique=True, nullable=False)
+    employee_count: Mapped[int | None] = mapped_column(Integer, nullable=True)
+    primary_location: Mapped[str | None] = mapped_column(String(255), nullable=True)
+    default_currency: Mapped[str | None] = mapped_column(String(10), nullable=True)
+    travel_manager_name: Mapped[str | None] = mapped_column(String(255), nullable=True)
+    travel_manager_email: Mapped[str | None] = mapped_column(String(255), nullable=True)
+    travel_program_notes: Mapped[str | None] = mapped_column(String(1000), nullable=True)
     created_at: Mapped[datetime] = mapped_column(DateTime, default=datetime.utcnow, nullable=False)
 
     users = relationship("User", back_populates="company", cascade="all, delete-orphan")

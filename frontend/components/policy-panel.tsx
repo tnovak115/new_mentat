@@ -2,16 +2,16 @@ import { TravelPolicy } from "@/types/api";
 
 export function PolicyPanel({ policy }: { policy: TravelPolicy }) {
   return (
-    <div className="rounded-3xl border border-black/10 bg-white p-6 shadow-panel">
+    <div className="section-card p-4">
       <div className="flex items-center justify-between">
         <div>
-          <p className="text-xs uppercase tracking-[0.2em] text-steel">Active travel policy</p>
-          <h3 className="mt-2 text-2xl font-semibold">Company guardrails</h3>
+          <p className="eyebrow">Active travel policy</p>
+          <h3 className="mt-1 text-xl font-semibold tracking-tight">Company guardrails</h3>
         </div>
-        <span className="rounded-full bg-emerald-50 px-3 py-1 text-sm text-emerald-700">SSO-ready placeholder auth</span>
+        <span className="badge bg-sky-50 text-ink ring-1 ring-sky-200">Active</span>
       </div>
 
-      <div className="mt-6 grid gap-4 md:grid-cols-2">
+      <div className="mt-4 grid gap-2 md:grid-cols-2">
         <PolicyItem label="Budget limit" value={`$${policy.budget_limit}`} />
         <PolicyItem label="Max hotel rate" value={`$${policy.max_hotel_nightly_rate}/night`} />
         <PolicyItem label="Preferred carriers" value={policy.preferred_carriers.join(", ")} />
@@ -23,9 +23,9 @@ export function PolicyPanel({ policy }: { policy: TravelPolicy }) {
 
 function PolicyItem({ label, value }: { label: string; value: string }) {
   return (
-    <div className="rounded-2xl bg-cloud p-4">
-      <p className="text-xs uppercase tracking-[0.2em] text-steel">{label}</p>
-      <p className="mt-2 text-base font-medium text-ink">{value}</p>
+    <div className="rounded-md border border-border bg-cloud p-2.5">
+      <p className="text-xs font-medium text-muted">{label}</p>
+      <p className="mt-0.5 text-sm font-semibold text-ink">{value}</p>
     </div>
   );
 }

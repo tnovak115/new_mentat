@@ -162,3 +162,17 @@ export type AdminDashboard = {
   approval_queue: AdminQueueRow[];
   fulfillment_queue: AdminQueueRow[];
 };
+
+export type AuthResponse = {
+  user: {
+    id: number;
+    username: string;
+    name: string;
+    email: string;
+    role: string;
+    company_id: number;
+    created_at: string;
+  };
+  company_id: number;
+  company_name: string;
+};

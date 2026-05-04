@@ -1,5 +1,6 @@
 ﻿import {
   AdminDashboard,
+  AuthResponse,
   Company,
   TravelPolicy,
   Trip,
@@ -138,6 +139,20 @@ export async function updatePolicy(companyId: number, payload: Record<string, un
 
 export async function createPolicy(payload: Record<string, unknown>): Promise<TravelPolicy> {
   return request("/api/v1/policies/", {
+    method: "POST",
+    body: JSON.stringify(payload),
+  });
+}
+
+export async function login(payload: Record<string, unknown>): Promise<AuthResponse> {
+  return request("/api/v1/auth/login", {
+    method: "POST",
+    body: JSON.stringify(payload),
+  });
+}
+
+export async function signup(payload: Record<string, unknown>): Promise<AuthResponse> {
+  return request("/api/v1/auth/signup", {
     method: "POST",
     body: JSON.stringify(payload),
   });

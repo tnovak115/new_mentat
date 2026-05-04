@@ -24,6 +24,7 @@ export function TripsClient({
   const [trips, setTrips] = useState(initialTrips);
   const [latestSubmission, setLatestSubmission] = useState<TripSubmissionResponse | null>(null);
   const [focusedTrip, setFocusedTrip] = useState<Trip | null>(initialTrips[0] ?? null);
+  const [activeTripTab, setActiveTripTab] = useState<"new" | "manage">("manage");
   const [actionPending, setActionPending] = useState(false);
   const [actionMessage, setActionMessage] = useState<string | null>(null);
   const [actionError, setActionError] = useState<string | null>(null);
@@ -31,6 +32,7 @@ export function TripsClient({
   function handleSubmitted(payload: TripSubmissionResponse) {
     setLatestSubmission(payload);
     setFocusedTrip(payload.trip);
+    setActiveTripTab("new");
     setActionMessage(null);
     setActionError(null);
     setTrips((current) => [payload.trip, ...current.filter((trip) => trip.id !== payload.trip.id)]);
@@ -153,100 +155,159 @@ export function TripsClient({
   }
 
   return (
-    <div className="grid gap-6 lg:grid-cols-[0.95fr_1.05fr]">
-      <div className="space-y-6">
-        <TripRequestForm companies={companies} onSubmitted={handleSubmitted} />
-        <div>
-          <p className="mb-3 text-xs uppercase tracking-[0.2em] text-steel">Submitted trips</p>
-          <TripsTable trips={trips} />
-        </div>
+    <div className="space-y-3">
+      <div className="section-card flex flex-wrap gap-1 p-1">
+        <button
+          className={`rounded px-3 py-2 text-sm font-semibold ${activeTripTab === "manage" ? "bg-ink text-white" : "text-steel hover:bg-cloud"}`}
+          onClick={() => setActiveTripTab("manage")}
+          type="button"
+        >
+          Manage trips
+        </button>
+        <button
+          className={`rounded px-3 py-2 text-sm font-semibold ${activeTripTab === "new" ? "bg-ink text-white" : "text-steel hover:bg-cloud"}`}
+          onClick={() => setActiveTripTab("new")}
+          type="button"
+        >
+          New trip
+        </button>
       </div>
 
-      <div className="space-y-4">
-        <div>
-          <p className="text-xs uppercase tracking-[0.2em] text-steel">Recommendation output</p>
-          <h3 className="mt-2 text-3xl font-semibold">Selection and booking flow</h3>
+      {activeTripTab === "new" ? (
+        <div className="grid gap-3 lg:grid-cols-[0.9fr_1.1fr]">
+          <TripRequestForm companies={companies} onSubmitted={handleSubmitted} />
+          <RecommendationWorkspace
+            actionError={actionError}
+            actionMessage={actionMessage}
+            actionPending={actionPending}
+            focusedTrip={focusedTrip}
+            latestSubmission={latestSubmission}
+            onApprove={handleApprove}
+            onConfirmBooking={handleConfirmBooking}
+            onReject={handleReject}
+            onSaveTraveler={handleTravelerProfileSave}
+            onSelectOption={handleSelectOption}
+          />
         </div>
-        {focusedTrip ? (
-          <>
-            <BookingStatusPanel trip={focusedTrip} latestSubmission={latestSubmission} />
-            <TravelerProfileEditor
-              key={focusedTrip.id}
-              trip={focusedTrip}
-              pending={actionPending}
-              onSave={handleTravelerProfileSave}
-            />
-            <div className="space-y-2 text-sm">
-              {actionMessage ? <p className="text-emerald-700">{actionMessage}</p> : null}
-              {actionError ? <p className="text-red-700">{actionError}</p> : null}
-            </div>
-            {focusedTrip.status === "pending_approval" ? (
-              <div className="rounded-3xl border border-amber-200 bg-amber-50 p-5">
-                <p className="text-xs uppercase tracking-[0.2em] text-amber-700">Approval required</p>
-                <p className="mt-2 text-sm text-amber-800">
-                  This selected itinerary is outside policy and has been routed for review. For the MVP demo, you can
-                  advance or reject it here.
-                </p>
-                <div className="mt-4 flex flex-wrap gap-3">
-                  <button
-                    type="button"
-                    onClick={handleApprove}
-                    disabled={actionPending}
-                    className="rounded-full bg-amber-700 px-5 py-3 text-sm font-medium text-white disabled:opacity-60"
-                  >
-                    {actionPending ? "Processing..." : "Approve exception"}
-                  </button>
-                  <button
-                    type="button"
-                    onClick={handleReject}
-                    disabled={actionPending}
-                    className="rounded-full border border-amber-300 px-5 py-3 text-sm font-medium text-amber-900 disabled:opacity-60"
-                  >
-                    Reject and reselect
-                  </button>
-                </div>
+      ) : (
+        <div className="grid gap-3 xl:grid-cols-[1.1fr_0.9fr]">
+          <div className="section-card p-4">
+            <div className="mb-3 flex items-end justify-between gap-3">
+              <div>
+                <p className="eyebrow">Manage trips</p>
+                <h3 className="mt-1 text-xl font-semibold tracking-tight">Planned and staged travel</h3>
               </div>
-            ) : null}
-            {focusedTrip.status === "approved" && focusedTrip.booking ? (
-              <div className="rounded-3xl border border-sky-200 bg-sky-50 p-5">
-                <p className="text-xs uppercase tracking-[0.2em] text-sky-700">Ready to book</p>
-                <p className="mt-2 text-sm text-sky-900">
-                  The selected itinerary is approved. Confirm the mock booking to generate a reference and move the trip
-                  into a booked state.
-                </p>
-                <button
-                  type="button"
-                  onClick={handleConfirmBooking}
-                  disabled={actionPending}
-                  className="mt-4 rounded-full bg-sky-700 px-5 py-3 text-sm font-medium text-white disabled:opacity-60"
-                >
-                  {actionPending ? "Confirming..." : "Confirm booking"}
+              <button className="btn-secondary" onClick={() => setActiveTripTab("new")} type="button">
+                New trip
+              </button>
+            </div>
+            <TripsTable trips={trips} />
+          </div>
+          <RecommendationWorkspace
+            actionError={actionError}
+            actionMessage={actionMessage}
+            actionPending={actionPending}
+            focusedTrip={focusedTrip}
+            latestSubmission={latestSubmission}
+            onApprove={handleApprove}
+            onConfirmBooking={handleConfirmBooking}
+            onReject={handleReject}
+            onSaveTraveler={handleTravelerProfileSave}
+            onSelectOption={handleSelectOption}
+          />
+        </div>
+      )}
+    </div>
+  );
+}
+
+function RecommendationWorkspace({
+  focusedTrip,
+  latestSubmission,
+  actionPending,
+  actionMessage,
+  actionError,
+  onApprove,
+  onReject,
+  onConfirmBooking,
+  onSelectOption,
+  onSaveTraveler,
+}: {
+  focusedTrip: Trip | null;
+  latestSubmission: TripSubmissionResponse | null;
+  actionPending: boolean;
+  actionMessage: string | null;
+  actionError: string | null;
+  onApprove: () => Promise<void>;
+  onReject: () => Promise<void>;
+  onConfirmBooking: () => Promise<void>;
+  onSelectOption: (optionId: number) => Promise<void>;
+  onSaveTraveler: (payload: TravelerProfileFormState) => Promise<void>;
+}) {
+  return (
+    <div className="space-y-3">
+      <div>
+        <p className="eyebrow">Recommendation output</p>
+        <h3 className="mt-1 text-xl font-semibold tracking-tight">Selection and booking flow</h3>
+      </div>
+      {focusedTrip ? (
+        <>
+          <BookingStatusPanel trip={focusedTrip} latestSubmission={latestSubmission} />
+          <TravelerProfileEditor
+            key={focusedTrip.id}
+            trip={focusedTrip}
+            pending={actionPending}
+            onSave={onSaveTraveler}
+          />
+          <div className="space-y-2 text-sm">
+            {actionMessage ? <p className="text-emerald-700">{actionMessage}</p> : null}
+            {actionError ? <p className="text-red-700">{actionError}</p> : null}
+          </div>
+          {focusedTrip.status === "pending_approval" ? (
+            <div className="rounded-lg border border-amber-200 bg-amber-50 p-5">
+              <p className="text-xs font-semibold uppercase tracking-[0.12em] text-amber-700">Approval required</p>
+              <p className="mt-2 text-sm text-amber-800">
+                This selected itinerary is outside policy and has been routed for review. For the MVP demo, you can
+                advance or reject it here.
+              </p>
+              <div className="mt-4 flex flex-wrap gap-3">
+                <button type="button" onClick={onApprove} disabled={actionPending} className="btn-primary bg-amber-700 hover:bg-amber-800">
+                  {actionPending ? "Processing..." : "Approve exception"}
+                </button>
+                <button type="button" onClick={onReject} disabled={actionPending} className="btn-secondary border-amber-300 text-amber-900">
+                  Reject and reselect
                 </button>
               </div>
-            ) : null}
-            {focusedTrip.recommendations.map((recommendation) => (
-              <RecommendationCard
-                key={recommendation.id}
-                recommendation={recommendation}
-                actionLabel={
-                  focusedTrip.selected_option?.id === recommendation.option.id ? "Selected option" : "Choose this option"
-                }
-                actionDisabled={
-                  actionPending ||
-                  focusedTrip.status === "booked" ||
-                  focusedTrip.selected_option?.id === recommendation.option.id
-                }
-                isSelected={focusedTrip.selected_option?.id === recommendation.option.id}
-                onAction={() => handleSelectOption(recommendation.option.id)}
-              />
-            ))}
-          </>
-        ) : (
-          <div className="rounded-3xl border border-dashed border-black/10 bg-white p-8 text-steel shadow-panel">
-            Submit a trip request to generate ranked recommendations with savings and compliance flags.
-          </div>
-        )}
-      </div>
+            </div>
+          ) : null}
+          {focusedTrip.status === "approved" && focusedTrip.booking ? (
+            <div className="rounded-lg border border-sky-200 bg-sky-50 p-5">
+              <p className="text-xs font-semibold uppercase tracking-[0.12em] text-sky-700">Ready to book</p>
+              <p className="mt-2 text-sm text-sky-900">
+                The selected itinerary is approved. Confirm the mock booking to generate a reference and move the trip
+                into a booked state.
+              </p>
+              <button type="button" onClick={onConfirmBooking} disabled={actionPending} className="btn-primary mt-4 bg-sky-700 hover:bg-sky-800">
+                {actionPending ? "Confirming..." : "Confirm booking"}
+              </button>
+            </div>
+          ) : null}
+          {focusedTrip.recommendations.map((recommendation) => (
+            <RecommendationCard
+              key={recommendation.id}
+              recommendation={recommendation}
+              actionLabel={focusedTrip.selected_option?.id === recommendation.option.id ? "Selected option" : "Choose this option"}
+              actionDisabled={actionPending || focusedTrip.status === "booked" || focusedTrip.selected_option?.id === recommendation.option.id}
+              isSelected={focusedTrip.selected_option?.id === recommendation.option.id}
+              onAction={() => onSelectOption(recommendation.option.id)}
+            />
+          ))}
+        </>
+      ) : (
+        <div className="section-card border-dashed p-6 text-steel">
+          Submit a trip request to generate ranked recommendations with savings and compliance flags.
+        </div>
+      )}
     </div>
   );
 }
@@ -262,19 +323,19 @@ function BookingStatusPanel({
   const profileReady = isTravelerProfileReady(trip.traveler_profile);
 
   return (
-    <div className="rounded-3xl border border-black/10 bg-white p-6 shadow-panel">
+    <div className="section-card p-5">
       <div className="flex flex-wrap items-start justify-between gap-4">
         <div>
-          <p className="text-xs uppercase tracking-[0.2em] text-steel">Focused trip</p>
-          <h3 className="mt-2 text-2xl font-semibold">
+          <p className="eyebrow">Focused trip</p>
+          <h3 className="mt-2 text-xl font-semibold tracking-tight">
             Trip #{trip.id} for {trip.traveler_name}
           </h3>
           <p className="mt-2 text-sm text-steel">
             {trip.origin} to {trip.destination} · status: {trip.status.replaceAll("_", " ")}
           </p>
         </div>
-        <div className="rounded-2xl bg-cloud px-4 py-3 text-right">
-          <p className="text-xs uppercase tracking-[0.2em] text-steel">Booking state</p>
+        <div className="rounded-lg border border-border bg-cloud px-4 py-3 text-right">
+          <p className="text-xs font-medium text-muted">Booking state</p>
           <p className="text-lg font-semibold capitalize">
             {(trip.booking?.status ?? "not started").replaceAll("_", " ")}
           </p>
@@ -282,7 +343,7 @@ function BookingStatusPanel({
       </div>
 
       {latestSubmission?.trip.id === trip.id ? (
-        <div className="mt-6 rounded-2xl border border-emerald-200 bg-emerald-50 p-4 text-sm text-emerald-800">
+        <div className="mt-6 rounded-lg border border-emerald-200 bg-emerald-50 p-4 text-sm text-emerald-800">
           Cheapest returned option: {formatCurrency(latestSubmission.summary.cheapest_option_cost)} across {latestSubmission.summary.total_options} options.
         </div>
       ) : null}
@@ -295,19 +356,19 @@ function BookingStatusPanel({
           <SummaryItem label="Compliance" value={activeOption.policy_compliant ? "Compliant" : "Needs approval"} />
         </div>
       ) : (
-        <div className="mt-6 rounded-2xl border border-dashed border-black/10 bg-cloud p-4 text-sm text-steel">
+        <div className="mt-6 rounded-lg border border-dashed border-border bg-cloud p-4 text-sm text-steel">
           No itinerary selected yet. Choose one of the ranked options below to continue.
         </div>
       )}
 
       {trip.booking?.confirmation_code ? (
-        <div className="mt-6 rounded-2xl border border-emerald-200 bg-emerald-50 p-4 text-sm text-emerald-800">
+        <div className="mt-6 rounded-lg border border-emerald-200 bg-emerald-50 p-4 text-sm text-emerald-800">
           Booking confirmed with reference {trip.booking.confirmation_code}
           {trip.booking.provider_record_locator ? ` and locator ${trip.booking.provider_record_locator}` : ""}.
         </div>
       ) : (
         <div
-          className={`mt-6 rounded-2xl border p-4 text-sm ${
+          className={`mt-6 rounded-lg border p-4 text-sm ${
             profileReady
               ? "border-emerald-200 bg-emerald-50 text-emerald-800"
               : "border-amber-200 bg-amber-50 text-amber-800"
@@ -324,8 +385,8 @@ function BookingStatusPanel({
 
 function SummaryItem({ label, value }: { label: string; value: string }) {
   return (
-    <div className="rounded-2xl bg-cloud p-4">
-      <p className="text-xs uppercase tracking-[0.2em] text-steel">{label}</p>
+    <div className="rounded-lg border border-border bg-cloud p-3">
+      <p className="text-xs font-medium text-muted">{label}</p>
       <p className="mt-2 text-lg font-medium">{value}</p>
     </div>
   );
@@ -363,10 +424,10 @@ function TravelerProfileEditor({
   }
 
   return (
-    <form className="rounded-3xl border border-black/10 bg-white p-6 shadow-panel" onSubmit={handleSubmit}>
+    <form className="section-card p-5" onSubmit={handleSubmit}>
       <div className="mb-6">
-        <p className="text-xs uppercase tracking-[0.2em] text-steel">Traveler profile</p>
-        <h3 className="mt-2 text-2xl font-semibold">Booking-ready traveler details</h3>
+        <p className="eyebrow">Traveler profile</p>
+        <h3 className="mt-2 text-xl font-semibold tracking-tight">Booking-ready traveler details</h3>
         <p className="mt-2 text-sm text-steel">
           This profile travels with the trip and is checked before booking can be confirmed.
         </p>
@@ -440,7 +501,7 @@ function TravelerProfileEditor({
       <button
         type="submit"
         disabled={pending}
-        className="mt-6 rounded-full bg-ink px-5 py-3 text-sm font-medium text-white disabled:opacity-60"
+        className="btn-primary mt-6"
       >
         {pending ? "Saving..." : "Save traveler profile"}
       </button>

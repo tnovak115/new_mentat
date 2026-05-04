@@ -16,9 +16,11 @@ type PolicyFormState = {
 export function AdminControls({
   companies: initialCompanies,
   policy: initialPolicy,
+  showCompanySetup = true,
 }: {
   companies: Company[];
   policy: TravelPolicy;
+  showCompanySetup?: boolean;
 }) {
   const [companies, setCompanies] = useState(initialCompanies);
   const [selectedCompanyId, setSelectedCompanyId] = useState(initialPolicy.company_id);
@@ -128,26 +130,28 @@ export function AdminControls({
 
   return (
     <div className="grid gap-6 lg:grid-cols-2">
-      <form className="rounded-3xl border border-black/10 bg-white p-6 shadow-panel" onSubmit={handleCompanySubmit}>
-        <p className="text-xs uppercase tracking-[0.2em] text-steel">Company setup</p>
-        <h3 className="mt-2 text-2xl font-semibold">Add a company</h3>
-        <label className="mt-5 block">
-          <span className="mb-2 block text-sm font-medium text-steel">Company name</span>
-          <input className="field" value={companyName} onChange={(e) => setCompanyName(e.target.value)} required />
-        </label>
-        <button
-          className="mt-5 rounded-full bg-accent px-5 py-3 text-sm font-medium text-white disabled:opacity-60"
-          disabled={companyPending}
-          type="submit"
-        >
-          {companyPending ? "Creating..." : "Create company"}
-        </button>
-        <p className="mt-4 text-sm text-steel">{companies.length} companies available in this workspace.</p>
-      </form>
+      {showCompanySetup ? (
+        <form className="section-card p-5" onSubmit={handleCompanySubmit}>
+          <p className="eyebrow">Company setup</p>
+          <h3 className="mt-2 text-xl font-semibold tracking-tight">Add a company</h3>
+          <label className="mt-5 block">
+            <span className="mb-2 block text-sm font-medium text-steel">Company name</span>
+            <input className="field" value={companyName} onChange={(e) => setCompanyName(e.target.value)} required />
+          </label>
+          <button
+            className="btn-primary mt-5"
+            disabled={companyPending}
+            type="submit"
+          >
+            {companyPending ? "Creating..." : "Create company"}
+          </button>
+          <p className="mt-4 text-sm text-steel">{companies.length} companies available in this workspace.</p>
+        </form>
+      ) : null}
 
-      <form className="rounded-3xl border border-black/10 bg-white p-6 shadow-panel" onSubmit={handlePolicySubmit}>
-        <p className="text-xs uppercase tracking-[0.2em] text-steel">Policy controls</p>
-        <h3 className="mt-2 text-2xl font-semibold">Create or update a policy</h3>
+      <form className={`section-card p-5 ${showCompanySetup ? "" : "lg:col-span-2"}`} onSubmit={handlePolicySubmit}>
+        <p className="eyebrow">Policy controls</p>
+        <h3 className="mt-2 text-xl font-semibold tracking-tight">Create or update a policy</h3>
 
         <div className="mt-5 grid gap-4">
           <label>
@@ -178,19 +182,19 @@ export function AdminControls({
           </label>
         </div>
 
-        <div className="mt-4 flex gap-4 text-sm text-steel">
+        <div className="mt-4 flex flex-wrap gap-4 text-sm text-steel">
           <label className="flex items-center gap-2">
-            <input type="checkbox" checked={policyForm.rail_enabled} onChange={(e) => setPolicyForm({ ...policyForm, rail_enabled: e.target.checked })} />
+            <input className="h-4 w-4 rounded border-border text-accent" type="checkbox" checked={policyForm.rail_enabled} onChange={(e) => setPolicyForm({ ...policyForm, rail_enabled: e.target.checked })} />
             Rail enabled
           </label>
           <label className="flex items-center gap-2">
-            <input type="checkbox" checked={policyForm.hotel_enabled} onChange={(e) => setPolicyForm({ ...policyForm, hotel_enabled: e.target.checked })} />
+            <input className="h-4 w-4 rounded border-border text-accent" type="checkbox" checked={policyForm.hotel_enabled} onChange={(e) => setPolicyForm({ ...policyForm, hotel_enabled: e.target.checked })} />
             Hotel enabled
           </label>
         </div>
 
         <button
-          className="mt-5 rounded-full bg-ink px-5 py-3 text-sm font-medium text-white disabled:opacity-60"
+          className="btn-primary mt-5"
           disabled={policyPending}
           type="submit"
         >

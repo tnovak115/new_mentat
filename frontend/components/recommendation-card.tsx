@@ -16,39 +16,48 @@ export function RecommendationCard({
   onAction?: () => void;
 }) {
   const option = recommendation.option;
+  const isRecommended = recommendation.rank === 1;
   return (
-    <div className="rounded-3xl border border-black/10 bg-white p-6 shadow-panel">
-      <div className="flex items-start justify-between gap-4">
+    <div className={`section-card overflow-hidden ${isRecommended ? "border-accent/40" : ""}`}>
+      {isRecommended ? (
+        <div className="border-b border-accent/25 bg-sky-50/80 px-4 py-2 text-xs font-semibold uppercase tracking-[0.14em] text-ink">
+          Recommended decision: best savings, timing, and policy fit
+        </div>
+      ) : null}
+
+      <div className="p-4">
+      <div className="flex items-start justify-between gap-3">
         <div>
-          <p className="text-xs uppercase tracking-[0.2em] text-steel">Recommendation #{recommendation.rank}</p>
-          <h3 className="mt-2 text-2xl font-semibold capitalize">
+          <p className="eyebrow">Rank #{recommendation.rank}</p>
+          <h3 className="mt-1 text-xl font-semibold capitalize tracking-tight">
             {option.mode} via {option.carrier}
           </h3>
-          <p className="mt-2 text-sm text-steel">{recommendation.rationale}</p>
+          <p className="mt-2 max-w-2xl text-sm leading-5 text-steel">{recommendation.rationale}</p>
         </div>
-        <div className="rounded-2xl bg-cloud px-4 py-3 text-right">
-          <p className="text-xs uppercase tracking-[0.2em] text-steel">Score</p>
-          <p className="text-2xl font-semibold">{recommendation.score.toFixed(2)}</p>
+        <div className="rounded-md border border-border bg-white px-3 py-2 text-right shadow-panel">
+          <p className="text-xs font-medium text-muted">Optimization score</p>
+          <p className="text-2xl font-semibold tracking-tight">{recommendation.score.toFixed(2)}</p>
         </div>
       </div>
 
-      <div className="mt-6 grid gap-4 md:grid-cols-4">
+      <div className="mt-4 grid gap-2 md:grid-cols-4">
         <Detail label="Cost" value={formatCurrency(option.total_cost)} />
         <Detail label="Duration" value={formatDuration(option.total_duration_minutes)} />
-        <Detail label="Cabin" value={option.cabin_class} />
+        <Detail label="Legs" value={`${Number(option.metadata.stops ?? 0) + 1}`} />
         <Detail label="Savings" value={formatCurrency(recommendation.projected_savings)} />
       </div>
 
-      <div className="mt-6 flex flex-wrap gap-2">
+      <div className="mt-4 flex flex-wrap gap-1.5">
         <Badge tone={option.policy_compliant ? "success" : "warning"}>
-          {option.policy_compliant ? "Policy compliant" : "Needs review"}
+          {option.policy_compliant ? "Compliant" : "Policy warning"}
         </Badge>
         {isSelected ? <Badge tone="success">Selected for booking</Badge> : null}
+        <Badge tone="neutral">{option.mode}</Badge>
         <Badge tone="neutral">{option.provider}</Badge>
         <Badge tone="neutral">
           {option.metadata.departure_time} - {option.metadata.arrival_time}
         </Badge>
-        <Badge tone="neutral">{option.metadata.stops ?? 0} stops</Badge>
+        <Badge tone="neutral">{option.cabin_class}</Badge>
         {option.policy_flags.map((flag) => (
           <Badge key={flag} tone="warning">
             {flag}
@@ -57,26 +66,27 @@ export function RecommendationCard({
       </div>
 
       {onAction ? (
-        <div className="mt-6">
+        <div className="mt-5">
           <button
             type="button"
             onClick={onAction}
             disabled={actionDisabled}
-            className="rounded-full bg-ink px-5 py-3 text-sm font-medium text-white transition hover:opacity-90 disabled:cursor-not-allowed disabled:opacity-60"
+            className={isSelected ? "btn-secondary" : "btn-primary"}
           >
             {actionLabel ?? "Select option"}
           </button>
         </div>
       ) : null}
+      </div>
     </div>
   );
 }
 
 function Detail({ label, value }: { label: string; value: string }) {
   return (
-    <div className="rounded-2xl bg-cloud p-4">
-      <p className="text-xs uppercase tracking-[0.2em] text-steel">{label}</p>
-      <p className="mt-2 text-lg font-medium">{value}</p>
+    <div className="rounded-md border border-border bg-cloud p-2.5">
+      <p className="text-xs font-medium text-muted">{label}</p>
+      <p className="mt-0.5 text-base font-semibold tracking-tight">{value}</p>
     </div>
   );
 }
@@ -89,9 +99,9 @@ function Badge({
   tone: "success" | "warning" | "neutral";
 }) {
   const styles = {
-    success: "bg-emerald-50 text-emerald-700",
-    warning: "bg-amber-50 text-amber-700",
-    neutral: "bg-stone-100 text-stone-700",
+    success: "bg-sky-50 text-ink ring-1 ring-sky-200",
+    warning: "bg-amber-50 text-amber-700 ring-1 ring-amber-200",
+    neutral: "bg-white text-steel ring-1 ring-border",
   };
-  return <span className={`rounded-full px-3 py-1 text-sm ${styles[tone]}`}>{children}</span>;
+  return <span className={`badge ${styles[tone]}`}>{children}</span>;
 }

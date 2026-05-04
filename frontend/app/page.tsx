@@ -14,59 +14,99 @@ export default async function HomePage() {
   const policy = policies[0];
 
   const heroTrip = trips[0];
+  const recommended = heroTrip?.recommendations?.[0];
+  const totalSavings = trips.reduce(
+    (sum, trip) => sum + (trip.recommendations[0]?.projected_savings ?? 0),
+    0,
+  );
+  const exceptionCount = trips.filter((trip) => !trip.recommendations[0]?.option.policy_compliant).length;
 
   return (
     <Shell>
-      <section className="grid gap-6 lg:grid-cols-[1.4fr_1fr]">
-        <div className="rounded-[2rem] border border-black/10 bg-white p-8 shadow-panel">
-          <p className="text-xs uppercase tracking-[0.3em] text-accent">Optimizer-first MVP</p>
-          <h2 className="mt-4 max-w-3xl text-5xl font-semibold leading-tight">
-            Plan business travel with policy-aware recommendations before you commit to booking.
-          </h2>
-          <p className="mt-4 max-w-2xl text-lg text-steel">
-            This dashboard compares mock flight and rail inventory, flags policy exceptions, and surfaces projected savings for admins and travel coordinators.
+      <section className="mb-5 flex flex-wrap items-end justify-between gap-4 border-b border-border pb-5">
+        <div>
+          <p className="eyebrow">Admin command center</p>
+          <h2 className="mt-2 text-4xl font-semibold tracking-[-0.02em]">Travel decisions, savings, and policy risk</h2>
+          <p className="mt-2 max-w-3xl text-sm leading-6 text-steel">
+            Coordinate employee travel from a single operating view: the system recommends the best itinerary,
+            quantifies savings, and routes exceptions before booking work begins.
           </p>
         </div>
-        {policy ? (
-          <PolicyPanel policy={policy} />
-        ) : (
-          <div className="rounded-3xl border border-dashed border-black/10 bg-white p-8 text-steel shadow-panel">
-            Create a company policy from the admin page to activate optimization guardrails.
-          </div>
-        )}
+        <a className="btn-primary" href="/trips">Create trip request</a>
       </section>
 
-      <section className="mt-8 grid gap-4 md:grid-cols-3">
+      <section className="grid gap-3 md:grid-cols-3">
         {dashboard.metrics.map((metric) => (
           <StatCard key={metric.label} label={metric.label} value={metric.value} detail={metric.detail} />
         ))}
       </section>
 
-      <section className="mt-8 grid gap-6 lg:grid-cols-[1.1fr_0.9fr]">
-        <div>
-          <div className="mb-4 flex items-end justify-between">
-            <div>
-              <p className="text-xs uppercase tracking-[0.2em] text-steel">Recent requests</p>
-              <h3 className="mt-2 text-3xl font-semibold">Trip pipeline</h3>
+      <section className="mt-3 grid gap-3 lg:grid-cols-[1.15fr_0.85fr]">
+        <div className="space-y-3">
+          <div className="section-card p-4">
+            <div className="mb-3 flex items-end justify-between gap-4">
+              <div>
+                <p className="eyebrow">Recent requests</p>
+                <h3 className="mt-1 text-xl font-semibold tracking-tight">Trip pipeline</h3>
+              </div>
+              <a className="btn-secondary" href="/queue">Open queue</a>
+            </div>
+            <TripsTable trips={trips} />
+          </div>
+
+          <div className="section-card p-4">
+            <div className="mb-3">
+              <p className="eyebrow">Insights</p>
+              <h3 className="mt-1 text-xl font-semibold tracking-tight">Optimization signals</h3>
+            </div>
+            <div className="grid gap-3 md:grid-cols-3">
+              <InsightCard label="Savings identified" value={`$${Math.round(totalSavings).toLocaleString()}`} tone="success" />
+              <InsightCard label="Policy exceptions" value={`${exceptionCount}`} tone={exceptionCount > 0 ? "warning" : "success"} />
+              <InsightCard label="Open queues" value={`${dashboard.approval_queue.length + dashboard.fulfillment_queue.length}`} tone="neutral" />
             </div>
           </div>
-          <TripsTable trips={trips} />
         </div>
 
-        <div>
-          <div className="mb-4">
-            <p className="text-xs uppercase tracking-[0.2em] text-steel">Top recommendation preview</p>
-            <h3 className="mt-2 text-3xl font-semibold">Best-ranked itinerary</h3>
+        <div className="space-y-3">
+          <div>
+            <div>
+              <p className="eyebrow">Best current decision</p>
+              <h3 className="mt-1 text-xl font-semibold tracking-tight">Recommended itinerary</h3>
+            </div>
           </div>
-          {heroTrip?.recommendations?.[0] ? (
-            <RecommendationCard recommendation={heroTrip.recommendations[0]} />
+          {recommended ? (
+            <RecommendationCard recommendation={recommended} />
           ) : (
-            <div className="rounded-3xl border border-dashed border-black/10 bg-white p-8 text-steel shadow-panel">
+            <div className="section-card border-dashed p-6 text-steel">
               Submit your first trip request to populate optimizer recommendations.
+            </div>
+          )}
+
+          {policy ? (
+            <PolicyPanel policy={policy} />
+          ) : (
+            <div className="section-card border-dashed p-6 text-steel">
+              Create a company policy to activate optimization guardrails.
             </div>
           )}
         </div>
       </section>
     </Shell>
+  );
+}
+
+function InsightCard({ label, value, tone }: { label: string; value: string; tone: "success" | "warning" | "neutral" }) {
+  const toneClass = {
+    success: "text-ink bg-white border-border",
+    warning: "text-risk bg-white border-amber-200",
+    neutral: "text-steel bg-white border-border",
+  }[tone];
+
+  return (
+    <div className={`rounded-md border p-3 ${toneClass}`}>
+      <p className="text-xs font-medium">{label}</p>
+      <p className="mt-1 text-2xl font-semibold tracking-tight">{value}</p>
+      {tone === "success" ? <div className="mt-2 h-0.5 w-10 bg-accent" /> : null}
+    </div>
   );
 }

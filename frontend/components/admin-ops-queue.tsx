@@ -24,15 +24,15 @@ export function AdminOpsQueue({
 
 function ApprovalQueueSection({ rows }: { rows: AdminQueueRow[] }) {
   return (
-    <section className="rounded-3xl border border-black/10 bg-white p-6 shadow-panel">
-      <p className="text-xs uppercase tracking-[0.2em] text-steel">Exception handling</p>
+    <section className="section-card p-5">
+      <p className="eyebrow">Exception handling</p>
       <div className="mt-2 flex items-center justify-between gap-3">
-        <h3 className="text-2xl font-semibold">Approval inbox</h3>
-        <span className="rounded-full bg-cloud px-3 py-1 text-sm text-steel">{rows.length} open</span>
+        <h3 className="text-xl font-semibold tracking-tight">Approval inbox</h3>
+        <span className="badge bg-cloud text-steel ring-1 ring-border">{rows.length} open</span>
       </div>
 
       {rows.length === 0 ? (
-        <div className="mt-5 rounded-2xl border border-dashed border-black/10 bg-cloud p-4 text-sm text-steel">
+        <div className="mt-5 rounded-lg border border-dashed border-border bg-cloud p-4 text-sm text-steel">
           No trips are waiting on approval right now.
         </div>
       ) : (
@@ -48,15 +48,15 @@ function ApprovalQueueSection({ rows }: { rows: AdminQueueRow[] }) {
 
 function FulfillmentQueueSection({ rows }: { rows: AdminQueueRow[] }) {
   return (
-    <section className="rounded-3xl border border-black/10 bg-white p-6 shadow-panel">
-      <p className="text-xs uppercase tracking-[0.2em] text-steel">Travel desk handoff</p>
+    <section className="section-card p-5">
+      <p className="eyebrow">Travel desk handoff</p>
       <div className="mt-2 flex items-center justify-between gap-3">
-        <h3 className="text-2xl font-semibold">Assisted fulfillment</h3>
-        <span className="rounded-full bg-cloud px-3 py-1 text-sm text-steel">{rows.length} open</span>
+        <h3 className="text-xl font-semibold tracking-tight">Assisted fulfillment</h3>
+        <span className="badge bg-cloud text-steel ring-1 ring-border">{rows.length} open</span>
       </div>
 
       {rows.length === 0 ? (
-        <div className="mt-5 rounded-2xl border border-dashed border-black/10 bg-cloud p-4 text-sm text-steel">
+        <div className="mt-5 rounded-lg border border-dashed border-border bg-cloud p-4 text-sm text-steel">
           No trips are currently waiting on assisted fulfillment.
         </div>
       ) : (
@@ -103,7 +103,7 @@ function ApprovalQueueCard({ row }: { row: AdminQueueRow }) {
   }
 
   return (
-    <article className="rounded-2xl border border-black/10 bg-cloud p-4">
+    <article className="rounded-lg border border-border bg-cloud p-4">
       <QueueHeader row={row} />
       <div className="mt-4 grid gap-3 md:grid-cols-2">
         <QueueInfo label="Booking status">{row.booking_status?.replaceAll("_", " ") ?? "Not started"}</QueueInfo>
@@ -111,29 +111,29 @@ function ApprovalQueueCard({ row }: { row: AdminQueueRow }) {
       </div>
 
       {row.requested_reason ? (
-        <div className="mt-4 rounded-2xl bg-white px-4 py-3 text-sm text-ink">
-          <p className="text-xs uppercase tracking-[0.2em] text-steel">Reason</p>
+        <div className="mt-4 rounded-lg border border-border bg-white px-4 py-3 text-sm text-ink">
+          <p className="text-xs font-semibold uppercase tracking-[0.12em] text-muted">Reason</p>
           <p className="mt-1">{row.requested_reason}</p>
         </div>
       ) : null}
 
       <div className="mt-4 grid gap-3 md:grid-cols-2">
         <label className="text-sm text-ink">
-          <span className="text-xs uppercase tracking-[0.2em] text-steel">Approver name</span>
+          <span className="text-xs font-semibold uppercase tracking-[0.12em] text-muted">Approver name</span>
           <input
             value={approverName}
             onChange={(event) => setApproverName(event.target.value)}
-            className="mt-2 w-full rounded-2xl border border-black/10 bg-white px-4 py-3 outline-none"
+            className="field mt-2"
             placeholder="Taylor Admin"
           />
         </label>
         <label className="text-sm text-ink md:col-span-2">
-          <span className="text-xs uppercase tracking-[0.2em] text-steel">Decision notes</span>
+          <span className="text-xs font-semibold uppercase tracking-[0.12em] text-muted">Decision notes</span>
           <textarea
             value={approverNotes}
             onChange={(event) => setApproverNotes(event.target.value)}
             rows={3}
-            className="mt-2 w-full rounded-2xl border border-black/10 bg-white px-4 py-3 outline-none"
+            className="field mt-2"
             placeholder="Why this trip is approved or rejected."
           />
         </label>
@@ -146,7 +146,7 @@ function ApprovalQueueCard({ row }: { row: AdminQueueRow }) {
           type="button"
           onClick={() => void handleDecision("approve")}
           disabled={pending}
-          className="rounded-full bg-amber-700 px-5 py-3 text-sm font-medium text-white disabled:opacity-60"
+          className="btn-primary bg-amber-700 hover:bg-amber-800"
         >
           {pending ? "Processing..." : "Approve"}
         </button>
@@ -154,13 +154,13 @@ function ApprovalQueueCard({ row }: { row: AdminQueueRow }) {
           type="button"
           onClick={() => void handleDecision("reject")}
           disabled={pending}
-          className="rounded-full border border-amber-300 px-5 py-3 text-sm font-medium text-amber-900 disabled:opacity-60"
+          className="btn-secondary border-amber-300 text-amber-900"
         >
           Reject
         </button>
         <Link
           href={row.action_href}
-          className="inline-flex rounded-full border border-black/10 bg-white px-5 py-3 text-sm font-medium text-steel hover:bg-white/80"
+          className="btn-secondary"
         >
           Open trip
         </Link>
@@ -208,7 +208,7 @@ function FulfillmentQueueCard({ row }: { row: AdminQueueRow }) {
   }
 
   return (
-    <article className="rounded-2xl border border-black/10 bg-cloud p-4">
+    <article className="rounded-lg border border-border bg-cloud p-4">
       <QueueHeader row={row} />
       <div className="mt-4 grid gap-3 md:grid-cols-2">
         <QueueInfo label="Booking status">{row.booking_status?.replaceAll("_", " ") ?? "Not started"}</QueueInfo>
@@ -218,39 +218,39 @@ function FulfillmentQueueCard({ row }: { row: AdminQueueRow }) {
       <form onSubmit={handleSubmit} className="mt-4 space-y-4">
         <div className="grid gap-3 md:grid-cols-2">
           <label className="text-sm text-ink">
-            <span className="text-xs uppercase tracking-[0.2em] text-steel">Fulfilled by</span>
+            <span className="text-xs font-semibold uppercase tracking-[0.12em] text-muted">Fulfilled by</span>
             <input
               value={fulfilledBy}
               onChange={(event) => setFulfilledBy(event.target.value)}
-              className="mt-2 w-full rounded-2xl border border-black/10 bg-white px-4 py-3 outline-none"
+              className="field mt-2"
               placeholder="Taylor Ops"
             />
           </label>
           <label className="text-sm text-ink">
-            <span className="text-xs uppercase tracking-[0.2em] text-steel">Provider locator</span>
+            <span className="text-xs font-semibold uppercase tracking-[0.12em] text-muted">Provider locator</span>
             <input
               value={providerLocator}
               onChange={(event) => setProviderLocator(event.target.value)}
-              className="mt-2 w-full rounded-2xl border border-black/10 bg-white px-4 py-3 outline-none"
+              className="field mt-2"
               placeholder="OPS123"
             />
           </label>
           <label className="text-sm text-ink">
-            <span className="text-xs uppercase tracking-[0.2em] text-steel">Confirmation code</span>
+            <span className="text-xs font-semibold uppercase tracking-[0.12em] text-muted">Confirmation code</span>
             <input
               value={confirmationCode}
               onChange={(event) => setConfirmationCode(event.target.value)}
-              className="mt-2 w-full rounded-2xl border border-black/10 bg-white px-4 py-3 outline-none"
+              className="field mt-2"
               placeholder="Optional override"
             />
           </label>
           <label className="text-sm text-ink md:col-span-2">
-            <span className="text-xs uppercase tracking-[0.2em] text-steel">Completion notes</span>
+            <span className="text-xs font-semibold uppercase tracking-[0.12em] text-muted">Completion notes</span>
             <textarea
               value={completionNotes}
               onChange={(event) => setCompletionNotes(event.target.value)}
               rows={3}
-              className="mt-2 w-full rounded-2xl border border-black/10 bg-white px-4 py-3 outline-none"
+              className="field mt-2"
               placeholder="Booked with negotiated fare, seat assigned, and traveler notified."
             />
           </label>
@@ -262,13 +262,13 @@ function FulfillmentQueueCard({ row }: { row: AdminQueueRow }) {
           <button
             type="submit"
             disabled={pending || !canSubmit}
-            className="rounded-full bg-emerald-700 px-5 py-3 text-sm font-medium text-white disabled:opacity-60"
+            className="btn-primary bg-emerald-700 hover:bg-emerald-800"
           >
             {pending ? "Completing..." : "Complete fulfillment"}
           </button>
           <Link
             href={row.action_href}
-            className="inline-flex rounded-full border border-black/10 bg-white px-5 py-3 text-sm font-medium text-steel hover:bg-white/80"
+            className="btn-secondary"
           >
             Open trip
           </Link>
@@ -285,7 +285,7 @@ function QueueHeader({ row }: { row: AdminQueueRow }) {
         <p className="text-lg font-medium text-ink">{row.traveler_name}</p>
         <p className="text-sm text-steel">{row.route}</p>
       </div>
-      <div className="rounded-full bg-white px-3 py-1 text-xs uppercase tracking-[0.16em] text-steel">
+      <div className="badge bg-white text-steel ring-1 ring-border capitalize">
         {row.trip_status.replaceAll("_", " ")}
       </div>
     </div>
@@ -294,8 +294,8 @@ function QueueHeader({ row }: { row: AdminQueueRow }) {
 
 function QueueInfo({ label, children }: { label: string; children: React.ReactNode }) {
   return (
-    <div className="rounded-2xl bg-white px-4 py-3">
-      <p className="text-xs uppercase tracking-[0.2em] text-steel">{label}</p>
+    <div className="rounded-lg border border-border bg-white px-4 py-3">
+      <p className="text-xs font-semibold uppercase tracking-[0.12em] text-muted">{label}</p>
       <p className="mt-1 text-sm text-ink">{children}</p>
     </div>
   );

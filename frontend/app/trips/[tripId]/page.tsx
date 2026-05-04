@@ -23,8 +23,8 @@ export default async function TripDetailPage({
     <Shell>
       <div className="mb-8 flex flex-wrap items-center justify-between gap-4">
         <div>
-          <p className="text-xs uppercase tracking-[0.2em] text-steel">Trip detail</p>
-          <h2 className="mt-2 text-4xl font-semibold">
+          <p className="eyebrow">Trip detail</p>
+          <h2 className="mt-2 text-4xl font-semibold tracking-tight">
             {trip.traveler_name} · {trip.origin} to {trip.destination}
           </h2>
           <p className="mt-3 max-w-2xl text-steel">
@@ -33,7 +33,7 @@ export default async function TripDetailPage({
         </div>
         <Link
           href="/trips"
-          className="rounded-full border border-black/10 bg-white px-5 py-3 text-sm font-medium text-steel hover:bg-cloud"
+          className="btn-secondary"
         >
           Back to Trips
         </Link>
@@ -41,8 +41,8 @@ export default async function TripDetailPage({
 
       <section className="grid gap-6 lg:grid-cols-[1.15fr_0.85fr]">
         <div className="space-y-6">
-          <div className="rounded-3xl border border-black/10 bg-white p-6 shadow-panel">
-            <p className="text-xs uppercase tracking-[0.2em] text-steel">Trip snapshot</p>
+          <div className="section-card p-5">
+            <p className="eyebrow">Trip snapshot</p>
             <div className="mt-4 grid gap-4 md:grid-cols-4">
               <SnapshotItem label="Trip status" value={trip.status.replaceAll("_", " ")} />
               <SnapshotItem label="Preference" value={trip.optimization_preference} />
@@ -52,15 +52,15 @@ export default async function TripDetailPage({
           </div>
 
           {activeOption ? (
-            <div className="rounded-3xl border border-black/10 bg-white p-6 shadow-panel">
+            <div className="section-card p-5">
               <div className="flex flex-wrap items-start justify-between gap-4">
                 <div>
-                  <p className="text-xs uppercase tracking-[0.2em] text-steel">Active itinerary</p>
-                  <h3 className="mt-2 text-2xl font-semibold capitalize">
+                  <p className="eyebrow">Active itinerary</p>
+                  <h3 className="mt-2 text-xl font-semibold capitalize tracking-tight">
                     {activeOption.mode} via {activeOption.carrier}
                   </h3>
                 </div>
-                <span className="rounded-full bg-stone-100 px-3 py-1 text-sm capitalize text-stone-700">
+                <span className="badge bg-slate-100 capitalize text-slate-700 ring-1 ring-slate-200">
                   {activeOption.policy_compliant ? "Policy compliant" : "Needs approval"}
                 </span>
               </div>
@@ -78,7 +78,7 @@ export default async function TripDetailPage({
               {activeOption.policy_flags.length > 0 ? (
                 <div className="mt-6 flex flex-wrap gap-2">
                   {activeOption.policy_flags.map((flag) => (
-                    <span key={flag} className="rounded-full bg-amber-50 px-3 py-1 text-sm text-amber-700">
+                    <span key={flag} className="badge bg-amber-50 text-amber-700 ring-1 ring-amber-200">
                       {flag}
                     </span>
                   ))}
@@ -89,8 +89,8 @@ export default async function TripDetailPage({
 
           <div>
             <div className="mb-4">
-              <p className="text-xs uppercase tracking-[0.2em] text-steel">Ranked options</p>
-              <h3 className="mt-2 text-3xl font-semibold">Recommendation set</h3>
+              <p className="eyebrow">Ranked options</p>
+              <h3 className="mt-2 text-2xl font-semibold tracking-tight">Recommendation set</h3>
             </div>
             <div className="space-y-4">
               {trip.recommendations.map((recommendation) => (
@@ -107,9 +107,9 @@ export default async function TripDetailPage({
         <div className="space-y-6">
           <TripWorkflowPanel initialTrip={trip} />
 
-          <div className="rounded-3xl border border-black/10 bg-white p-6 shadow-panel">
-            <p className="text-xs uppercase tracking-[0.2em] text-steel">Booking readiness</p>
-            <h3 className="mt-2 text-2xl font-semibold">Traveler profile</h3>
+          <div className="section-card p-5">
+            <p className="eyebrow">Booking readiness</p>
+            <h3 className="mt-2 text-xl font-semibold tracking-tight">Traveler profile</h3>
             {trip.traveler_profile ? (
               <div className="mt-5 space-y-3 text-sm">
                 <InfoRow label="Traveler">{trip.traveler_profile.traveler_name}</InfoRow>
@@ -125,13 +125,13 @@ export default async function TripDetailPage({
                 </InfoRow>
               </div>
             ) : (
-              <div className="mt-5 rounded-2xl border border-dashed border-black/10 bg-cloud p-4 text-sm text-steel">
+              <div className="mt-5 rounded-lg border border-dashed border-border bg-cloud p-4 text-sm text-steel">
                 No traveler profile is attached to this trip yet.
               </div>
             )}
 
             <div
-              className={`mt-5 rounded-2xl border p-4 text-sm ${
+              className={`mt-5 rounded-lg border p-4 text-sm ${
                 bookingReady
                   ? "border-emerald-200 bg-emerald-50 text-emerald-800"
                   : "border-amber-200 bg-amber-50 text-amber-800"
@@ -143,9 +143,9 @@ export default async function TripDetailPage({
             </div>
           </div>
 
-          <div className="rounded-3xl border border-black/10 bg-white p-6 shadow-panel">
-            <p className="text-xs uppercase tracking-[0.2em] text-steel">Booking record</p>
-            <h3 className="mt-2 text-2xl font-semibold">Execution state</h3>
+          <div className="section-card p-5">
+            <p className="eyebrow">Booking record</p>
+            <h3 className="mt-2 text-xl font-semibold tracking-tight">Execution state</h3>
             {trip.booking ? (
               <div className="mt-5 space-y-3 text-sm">
                 <InfoRow label="Booking status">{trip.booking.status.replaceAll("_", " ")}</InfoRow>
@@ -161,15 +161,15 @@ export default async function TripDetailPage({
                 <InfoRow label="Failure reason">{trip.booking.failure_reason ?? "None"}</InfoRow>
               </div>
             ) : (
-              <div className="mt-5 rounded-2xl border border-dashed border-black/10 bg-cloud p-4 text-sm text-steel">
+              <div className="mt-5 rounded-lg border border-dashed border-border bg-cloud p-4 text-sm text-steel">
                 Booking has not started for this trip yet.
               </div>
             )}
           </div>
 
-          <div className="rounded-3xl border border-black/10 bg-white p-6 shadow-panel">
-            <p className="text-xs uppercase tracking-[0.2em] text-steel">Approval record</p>
-            <h3 className="mt-2 text-2xl font-semibold">Exception history</h3>
+          <div className="section-card p-5">
+            <p className="eyebrow">Approval record</p>
+            <h3 className="mt-2 text-xl font-semibold tracking-tight">Exception history</h3>
             {trip.approval_request ? (
               <div className="mt-5 space-y-3 text-sm">
                 <InfoRow label="Approval status">{trip.approval_request.status.replaceAll("_", " ")}</InfoRow>
@@ -180,7 +180,7 @@ export default async function TripDetailPage({
                 <InfoRow label="Decided at">{trip.approval_request.decided_at ?? "Pending decision"}</InfoRow>
               </div>
             ) : (
-              <div className="mt-5 rounded-2xl border border-dashed border-black/10 bg-cloud p-4 text-sm text-steel">
+              <div className="mt-5 rounded-lg border border-dashed border-border bg-cloud p-4 text-sm text-steel">
                 No approval request exists for this trip.
               </div>
             )}
@@ -193,8 +193,8 @@ export default async function TripDetailPage({
 
 function SnapshotItem({ label, value }: { label: string; value: string }) {
   return (
-    <div className="rounded-2xl bg-cloud p-4">
-      <p className="text-xs uppercase tracking-[0.2em] text-steel">{label}</p>
+    <div className="rounded-lg border border-border bg-cloud p-3">
+      <p className="text-xs font-medium text-muted">{label}</p>
       <p className="mt-2 text-lg font-medium capitalize">{value}</p>
     </div>
   );
@@ -202,8 +202,8 @@ function SnapshotItem({ label, value }: { label: string; value: string }) {
 
 function InfoRow({ label, children }: { label: string; children: React.ReactNode }) {
   return (
-    <div className="rounded-2xl bg-cloud px-4 py-3">
-      <p className="text-xs uppercase tracking-[0.2em] text-steel">{label}</p>
+    <div className="rounded-lg border border-border bg-cloud px-4 py-3">
+      <p className="text-xs font-medium text-muted">{label}</p>
       <p className="mt-1 text-base text-ink">{children}</p>
     </div>
   );
