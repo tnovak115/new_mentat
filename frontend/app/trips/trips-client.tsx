@@ -116,7 +116,7 @@ export function TripsClient({
     try {
       const nextTrip = await confirmBooking(focusedTrip.booking.id);
       syncTrip(nextTrip);
-      setActionMessage(`Mock booking confirmed with reference ${nextTrip.booking?.confirmation_code}.`);
+      setActionMessage(`Booking confirmed with reference ${nextTrip.booking?.confirmation_code}.`);
     } catch (err) {
       setActionError(err instanceof Error ? err.message : "Unable to confirm booking");
     } finally {
@@ -267,8 +267,8 @@ function RecommendationWorkspace({
             <div className="rounded-lg border border-amber-200 bg-amber-50 p-5">
               <p className="text-xs font-semibold uppercase tracking-[0.12em] text-amber-700">Approval required</p>
               <p className="mt-2 text-sm text-amber-800">
-                This selected itinerary is outside policy and has been routed for review. For the MVP demo, you can
-                advance or reject it here.
+                This selected itinerary is outside policy and has been routed for review. Approve or reject the
+                exception to keep booking work moving.
               </p>
               <div className="mt-4 flex flex-wrap gap-3">
                 <button type="button" onClick={onApprove} disabled={actionPending} className="btn-primary bg-amber-700 hover:bg-amber-800">
@@ -284,7 +284,7 @@ function RecommendationWorkspace({
             <div className="rounded-lg border border-sky-200 bg-sky-50 p-5">
               <p className="text-xs font-semibold uppercase tracking-[0.12em] text-sky-700">Ready to book</p>
               <p className="mt-2 text-sm text-sky-900">
-                The selected itinerary is approved. Confirm the mock booking to generate a reference and move the trip
+                The selected itinerary is approved. Confirm the booking to generate a reference and move the trip
                 into a booked state.
               </p>
               <button type="button" onClick={onConfirmBooking} disabled={actionPending} className="btn-primary mt-4 bg-sky-700 hover:bg-sky-800">

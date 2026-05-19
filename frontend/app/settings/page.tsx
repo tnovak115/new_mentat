@@ -1,10 +1,11 @@
 import { AdminControls } from "@/components/admin-controls";
+import { DemoResetButton } from "@/components/demo-reset-button";
 import { PolicyPanel } from "@/components/policy-panel";
 import { Shell } from "@/components/shell";
 import { getCompanies, getPolicies } from "@/lib/api";
 
 const settings = [
-  ["Workspace name", "Mentat demo workspace"],
+  ["Workspace name", "Northstar Advisory"],
   ["Default currency", "USD"],
   ["Approval notifications", "Email and workspace queue"],
   ["Optimization mode", "Balanced cost, time, and policy fit"],
@@ -14,7 +15,7 @@ const integrations = [
   ["SSO", "Not connected"],
   ["HRIS", "Planned"],
   ["Expense platform", "Planned"],
-  ["Travel providers", "Mock inventory"],
+  ["Travel providers", "Provider adapter mode"],
 ];
 
 export default async function SettingsPage() {
@@ -67,10 +68,13 @@ export default async function SettingsPage() {
           <p className="eyebrow">System</p>
           <h3 className="mt-1 text-xl font-semibold tracking-tight">Prototype state</h3>
           <p className="mt-3 text-sm leading-6 text-steel">
-            Authentication and standalone traveler creation are visual-only. Backend-backed trip, queue, and policy data
-            are active.
+            Trip, queue, policy, booking, and report data are backend-backed. The next production milestone is replacing
+            the provider adapter with live inventory and SSO.
           </p>
-          <a className="btn-secondary mt-4" href="/login">Return to login</a>
+          <div className="mt-4 flex flex-wrap gap-3">
+            <a className="btn-secondary" href="/login">Return to login</a>
+            <DemoResetButton />
+          </div>
         </div>
       </section>
     </Shell>

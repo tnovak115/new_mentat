@@ -9,11 +9,30 @@
 
 const API_BASE_URL = process.env.NEXT_PUBLIC_API_BASE_URL ?? "http://localhost:8000";
 
+function getBrowserSession(): AuthResponse | null {
+  if (typeof window === "undefined") {
+    return null;
+  }
+
+  const raw = window.localStorage.getItem("mentat_session");
+  if (!raw) {
+    return null;
+  }
+
+  try {
+    return JSON.parse(raw) as AuthResponse;
+  } catch {
+    return null;
+  }
+}
+
 async function request<T>(path: string, init?: RequestInit): Promise<T> {
+  const session = getBrowserSession();
   const response = await fetch(`${API_BASE_URL}${path}`, {
     ...init,
     headers: {
       "Content-Type": "application/json",
+      ...(session?.access_token ? { Authorization: `Bearer ${session.access_token}` } : {}),
       ...(init?.headers ?? {}),
     },
     cache: "no-store",
@@ -155,5 +174,11 @@ export async function signup(payload: Record<string, unknown>): Promise<AuthResp
   return request("/api/v1/auth/signup", {
     method: "POST",
     body: JSON.stringify(payload),
+  });
+}
+
+export async function resetDemoData(): Promise<{ status: string; company: string; username: string; password: string }> {
+  return request("/api/v1/admin/reset-demo-data", {
+    method: "POST",
   });
 }

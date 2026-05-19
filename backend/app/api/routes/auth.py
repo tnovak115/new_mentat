@@ -2,7 +2,7 @@ from fastapi import APIRouter, Depends, HTTPException, status
 from sqlalchemy import or_
 from sqlalchemy.orm import Session
 
-from app.core.security import hash_password, verify_password
+from app.core.security import create_auth_token, hash_password, verify_password
 from app.db.session import get_db
 from app.models.company import Company
 from app.models.user import User
@@ -82,4 +82,5 @@ def _auth_response(user: User, company: Company) -> AuthResponse:
         ),
         company_id=company.id,
         company_name=company.name,
+        access_token=create_auth_token(user),
     )

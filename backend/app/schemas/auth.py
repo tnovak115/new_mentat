@@ -35,3 +35,5 @@ class AuthResponse(BaseModel):
     user: AuthUserRead
     company_id: int
     company_name: str
+    access_token: str
+    token_type: str = "bearer"

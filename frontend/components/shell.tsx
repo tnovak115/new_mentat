@@ -38,8 +38,8 @@ export function Shell({ children }: { children: ReactNode }) {
 
         <div className="mt-6 hidden rounded-md border border-border bg-cloud p-3 lg:block">
           <p className="eyebrow">Workspace</p>
-          <p className="mt-2 text-sm font-semibold text-ink">Visual prototype</p>
-          <p className="mt-1 text-xs leading-5 text-muted">Auth and role controls are mocked for this build.</p>
+          <p className="mt-2 text-sm font-semibold text-ink">Northstar Advisory</p>
+          <p className="mt-1 text-xs leading-5 text-muted">Company-scoped travel operations demo.</p>
         </div>
 
         <Link className="mt-3 hidden text-xs font-medium text-muted hover:text-ink lg:block" href="/login">

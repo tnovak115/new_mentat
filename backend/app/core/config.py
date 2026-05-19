@@ -10,6 +10,8 @@ class Settings(BaseSettings):
     database_url: str = "sqlite:///./travel_optimizer.db"
     allow_sqlite_fallback: bool = True
     cors_origins_raw: str = "http://localhost:3000"
+    auth_token_secret: str = "replace-me-before-production"
+    demo_company_id: int | None = None
 
     model_config = SettingsConfigDict(env_file=".env", case_sensitive=False)
 

@@ -1,8 +1,10 @@
-from fastapi import APIRouter, Depends, HTTPException, status
+from fastapi import APIRouter, Depends, HTTPException, Query, status
 from sqlalchemy.orm import Session
 
 from app.db.session import get_db
+from app.core.security import get_optional_current_user, resolve_company_scope
 from app.models.travel_policy import TravelPolicy
+from app.models.user import User
 from app.schemas.policy import TravelPolicyCreate, TravelPolicyRead, TravelPolicyUpdate
 
 router = APIRouter()
@@ -24,14 +26,27 @@ def _serialize(policy: TravelPolicy) -> TravelPolicyRead:
 
 
 @router.get("/", response_model=list[TravelPolicyRead])
-def list_policies(db: Session = Depends(get_db)) -> list[TravelPolicyRead]:
-    policies = db.query(TravelPolicy).order_by(TravelPolicy.company_id.asc()).all()
+def list_policies(
+    company_id: int | None = Query(default=None),
+    db: Session = Depends(get_db),
+    current_user: User | None = Depends(get_optional_current_user),
+) -> list[TravelPolicyRead]:
+    scope_company_id = resolve_company_scope(company_id, current_user)
+    query = db.query(TravelPolicy)
+    if scope_company_id is not None:
+        query = query.filter(TravelPolicy.company_id == scope_company_id)
+    policies = query.order_by(TravelPolicy.company_id.asc()).all()
     return [_serialize(policy) for policy in policies]
 
 
 @router.get("/{company_id}", response_model=TravelPolicyRead)
-def get_policy(company_id: int, db: Session = Depends(get_db)) -> TravelPolicyRead:
-    policy = db.query(TravelPolicy).filter(TravelPolicy.company_id == company_id).first()
+def get_policy(
+    company_id: int,
+    db: Session = Depends(get_db),
+    current_user: User | None = Depends(get_optional_current_user),
+) -> TravelPolicyRead:
+    scope_company_id = resolve_company_scope(company_id, current_user)
+    policy = db.query(TravelPolicy).filter(TravelPolicy.company_id == scope_company_id).first()
     if not policy:
         raise HTTPException(status_code=404, detail="Policy not found")
     return _serialize(policy)
@@ -58,8 +73,14 @@ def create_policy(payload: TravelPolicyCreate, db: Session = Depends(get_db)) ->
 
 
 @router.put("/{company_id}", response_model=TravelPolicyRead)
-def update_policy(company_id: int, payload: TravelPolicyUpdate, db: Session = Depends(get_db)) -> TravelPolicyRead:
-    policy = db.query(TravelPolicy).filter(TravelPolicy.company_id == company_id).first()
+def update_policy(
+    company_id: int,
+    payload: TravelPolicyUpdate,
+    db: Session = Depends(get_db),
+    current_user: User | None = Depends(get_optional_current_user),
+) -> TravelPolicyRead:
+    scope_company_id = resolve_company_scope(company_id, current_user)
+    policy = db.query(TravelPolicy).filter(TravelPolicy.company_id == scope_company_id).first()
     if not policy:
         raise HTTPException(status_code=404, detail="Policy not found")
     policy.budget_limit = payload.budget_limit

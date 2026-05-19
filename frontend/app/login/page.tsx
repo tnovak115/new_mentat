@@ -14,7 +14,7 @@ export default function LoginPage() {
               Corporate travel decisions without the manual drag.
             </h1>
             <p className="mt-4 max-w-2xl text-sm leading-6 text-steel">
-              A visual prototype for coordinating employee trips, optimization decisions, policy exceptions, and
+              A live demo workspace for coordinating employee trips, optimization decisions, policy exceptions, and
               savings visibility from one compact workspace.
             </p>
           </div>

@@ -8,8 +8,8 @@ from app.schemas.admin import AdminDashboardResponse, AdminQueueRow, AdminTripRo
 
 
 class AdminService:
-    def get_dashboard(self, db: Session) -> AdminDashboardResponse:
-        trips = (
+    def get_dashboard(self, db: Session, company_id: int | None = None) -> AdminDashboardResponse:
+        query = (
             db.query(TripRequest)
             .options(
                 joinedload(TripRequest.recommendations).joinedload(Recommendation.trip_option),
@@ -17,9 +17,10 @@ class AdminService:
                 joinedload(TripRequest.booking),
                 joinedload(TripRequest.approval_request),
             )
-            .order_by(TripRequest.created_at.desc())
-            .all()
         )
+        if company_id is not None:
+            query = query.filter(TripRequest.company_id == company_id)
+        trips = query.order_by(TripRequest.created_at.desc()).all()
 
         total_trips = len(trips)
         total_savings = 0.0
@@ -105,7 +106,7 @@ class AdminService:
         compliance_rate = f"{(compliant_count / total_trips * 100):.0f}%" if total_trips else "0%"
         metrics = [
             DashboardMetric(label="Trips submitted", value=str(total_trips), detail="Total requests in the workspace"),
-            DashboardMetric(label="Booked trips", value=str(booked_count), detail="Trips with confirmed mock bookings"),
+            DashboardMetric(label="Booked trips", value=str(booked_count), detail="Trips with confirmed booking references"),
             DashboardMetric(label="Pending approvals", value=str(pending_approval_count), detail="Trips waiting on exception review"),
             DashboardMetric(label="Fulfillment queue", value=str(fulfillment_queue_count), detail="Trips handed to ops for booking completion"),
             DashboardMetric(label="Projected savings", value=f"${total_savings:,.0f}", detail="Compared to highest-priced returned option"),

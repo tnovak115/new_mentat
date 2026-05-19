@@ -156,8 +156,8 @@ class TripService:
             ),
         )
 
-    def list_trips(self, db: Session) -> list[TripRequestRead]:
-        trips = (
+    def list_trips(self, db: Session, company_id: int | None = None) -> list[TripRequestRead]:
+        query = (
             db.query(TripRequest)
             .options(
                 joinedload(TripRequest.recommendations).joinedload(Recommendation.trip_option),
@@ -166,13 +166,14 @@ class TripService:
                 joinedload(TripRequest.selected_trip_option),
                 joinedload(TripRequest.booking),
             )
-            .order_by(TripRequest.created_at.desc())
-            .all()
         )
+        if company_id is not None:
+            query = query.filter(TripRequest.company_id == company_id)
+        trips = query.order_by(TripRequest.created_at.desc()).all()
         return [self._serialize_trip(trip) for trip in trips]
 
-    def get_trip(self, db: Session, trip_id: int) -> TripRequestRead | None:
-        trip = (
+    def get_trip(self, db: Session, trip_id: int, company_id: int | None = None) -> TripRequestRead | None:
+        query = (
             db.query(TripRequest)
             .options(
                 joinedload(TripRequest.recommendations).joinedload(Recommendation.trip_option),
@@ -182,8 +183,10 @@ class TripService:
                 joinedload(TripRequest.booking),
             )
             .filter(TripRequest.id == trip_id)
-            .first()
         )
+        if company_id is not None:
+            query = query.filter(TripRequest.company_id == company_id)
+        trip = query.first()
         if not trip:
             return None
         return self._serialize_trip(trip)

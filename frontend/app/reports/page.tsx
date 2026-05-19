@@ -1,5 +1,6 @@
 import { Shell } from "@/components/shell";
 import { StatCard } from "@/components/stat-card";
+import { CsvExportButton } from "@/components/csv-export-button";
 import { getAdminDashboard } from "@/lib/api";
 import { formatCurrency } from "@/lib/format";
 
@@ -21,7 +22,7 @@ export default async function ReportsPage() {
             operational workload.
           </p>
         </div>
-        <button className="btn-secondary" type="button">Export CSV</button>
+        <CsvExportButton rows={dashboard.trips} />
       </div>
 
       <div className="grid gap-3 md:grid-cols-3">

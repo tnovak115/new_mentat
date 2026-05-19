@@ -51,6 +51,7 @@ export function SignupCompanyForm() {
       });
       window.localStorage.removeItem("mentat_signup_account");
       window.localStorage.setItem("mentat_session", JSON.stringify(response));
+      document.cookie = `mentat_company_id=${response.company_id}; path=/; max-age=604800; SameSite=Lax`;
       router.push("/");
     } catch (err) {
       setError(err instanceof Error ? err.message : "Unable to create account");

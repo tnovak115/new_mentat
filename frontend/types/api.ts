@@ -1,6 +1,12 @@
 ﻿export type Company = {
   id: number;
   name: string;
+  employee_count: number | null;
+  primary_location: string | null;
+  default_currency: string | null;
+  travel_manager_name: string | null;
+  travel_manager_email: string | null;
+  travel_program_notes: string | null;
   created_at: string;
 };
 
@@ -175,4 +181,6 @@ export type AuthResponse = {
   };
   company_id: number;
   company_name: string;
+  access_token: string;
+  token_type: string;
 };
